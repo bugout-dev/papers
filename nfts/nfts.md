@@ -65,7 +65,82 @@ state every time a token is transferred from one party to another:
 event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
 ```
 
-These `Transfer` events have the following
+These `Transfer` events can have one of the two following application binary interfaces (ABIs):
+```json
+[
+    {
+        "anonymous": false,
+        "inputs": [
+            {"indexed": false, "name": "from", "type": "address"},
+            {"indexed": false, "name": "to", "type": "address"},
+            {"indexed": false, "name": "tokenId", "type": "uint256"},
+        ],
+        "name": "Transfer",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {"indexed": true, "name": "from", "type": "address"},
+            {"indexed": true, "name": "to", "type": "address"},
+            {"indexed": true, "name": "tokenId", "type": "uint256"},
+        ],
+        "name": "Transfer",
+        "type": "event"
+    }
+]
+```
+
+These ABIs allow us to identify whenever we encounter an Ethereum transaction which resulted in a
+`Transfer` event being emitted.
+
+Our dataset is a single [SQLite](https://sqlite.org) database.
+
+The core of our dataset is all the `Transfer` events that we crawled from the Ethereum blockchain
+between April 1, 2021 and September 25, 2021. We have partitioned these events into two tables -- `mints` and `transfers`.
+A mint represents the creation of an NFT and is signified by a `Transfer` event with a zero `from` address.
+A transfer represents the transfer of ownership of an NFT and is signified by a `Transfer` event with a
+*non-zero* `from` address.
+
+These tables have the following schemas:
+
+<!-- schema_mints -->
+```
+.schema mints
+sqlite> .schema mints
+CREATE TABLE mints
+    (
+        event_id TEXT NOT NULL UNIQUE ON CONFLICT FAIL,
+        transaction_hash TEXT,
+        block_number INTEGER,
+        nft_address TEXT REFERENCES nfts(address),
+        token_id TEXT,
+        from_address TEXT,
+        to_address TEXT,
+        transaction_value INTEGER,
+        timestamp INTEGER
+    );
+```
+
+<!-- schema_transfers -->
+```
+.schema transfers
+sqlite> .schema transfers
+CREATE TABLE transfers
+    (
+        event_id TEXT NOT NULL UNIQUE ON CONFLICT FAIL,
+        transaction_hash TEXT,
+        block_number INTEGER,
+        nft_address TEXT REFERENCES nfts(address),
+        token_id TEXT,
+        from_address TEXT,
+        to_address TEXT,
+        transaction_value INTEGER,
+        timestamp INTEGER
+    );
+```
+
+There are 6,687,719 `mints` and 4,533,252 `transfers` in our dataset.
 
 <!-- Smart contracts that comply with ERC721 write a
 
