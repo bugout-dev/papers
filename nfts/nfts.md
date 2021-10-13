@@ -11,6 +11,10 @@
 - [Yhtyyar Sahatov](https://github.com/yhtiyar)
 - [Sergei Sumarokov](https://github.com/kompotkot)
 
+## Document history
+
+First draft: October 13, 2021
+
 ## Abstract
 
 We present the Ethereum NFTs dataset, a representation of the activity on the Ethereum non-fungible
