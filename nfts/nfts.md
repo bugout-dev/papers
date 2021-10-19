@@ -17,12 +17,15 @@ First draft: October 13, 2021
 
 ## Abstract
 
-We present the Ethereum NFTs dataset, a representation of the activity on the Ethereum non-fungible
-token (NFT) market between April 1, 2021 and September 25, 2021 constructed purely from on-chain data.
+In this paper we present analysis of the activity on the Ethereum non-fungible
+token (NFT) market. Analysis is based on the dataset which we gathered in range between April 1, 2021 and September 25, 2021 and constructed purely from on-chain data.
 
-We then consider the following questions:
-1. Who owns NFTs on the Ethereum blockchain? Are NFTs for a small number of wealthy elite or are they for the masses?
+
+Scope of this work focuses on the following questions:
+
+1. Who owns NFTs on the Ethereum blockchain?
 2. How should one measure the utility of a non-fungible token?
+3. Are NFTs for a small number of wealthy elite or are they for the masses?
 
 We observe from the data that the distribution of the number of NFTs owned by Ethereum addresses is
 Zipfian in nature. This indicates that the NFT market is indeed an open market, free for anyone to
@@ -36,36 +39,33 @@ We propose an entropy-based measure of utility for NFT contracts -- their **owne
 
 ## Introduction
 
-A non-fungible token, or NFT, is a blockchain asset which serves as a distinct representation on the blockchain
-of some object or concept. It is non-fungible in the sense that it immutably and exclusively represents that object or concept.
-It will never change what it represents and the represented object or concept admits no *other* representation
+A non-fungible token (NFT) is a unique and non-interchangeable unit of data stored on a digital ledger (blockchain)[1](https://en.wikipedia.org/wiki/Non-fungible_token). It is non-fungible in the sense that it immutably and exclusively represents creator defined data asset, hence it can be used to represent virtually anything - ideas, physical objects, intellectual property.
+It will never change what it represents and the represented object or concept admits no _other_ representation
 on the blockchain.
 
-The global market for NFTs has seen a massive boom over the past 3 months. Visual artists and other content
-creators are digitizing their creations as NFTs to distribute their work to patrons. Game producers are
-tokenizing assets in computer and mobile games as NFTs to create shared worlds with *other* content
-creators.
+The global market for NFTs has seen a massive boom over the past 3 months[2](https://www.reuters.com/technology/nft-sales-surge-speculators-pile-sceptics-see-bubble-2021-08-25/). Visual artists and other content
+creators are digitizing their creations as NFTs to distribute their work to patrons[3](https://opensea.io). Game producers are
+tokenizing assets in computer and mobile games as NFTs to create shared worlds with _other_ content
+creators[4](https://www.lootproject.com/).
 
 Conventional digital representations of physical works can be replicated aribtrarily and indefinitely.
 For example, if you own a digital copy of a book, you could in principle make arbitrarily many clones
 of that copy and distribute it to anyone who asked for it.
 
-In contrast, NFTs naturally reflect the scarcity of the objects they represent. This essential scarcity
-makes NFTs a perfect tool to globally conserve value when transferring ideas and assets from one digital reality
+In contrast, NFTs naturally reflect the scarcity of the asset they represent. This essential scarcity
+makes NFTs a perfect tool to globally conserve value when transferring from one digital reality
 to another. NFTs allow people to create common representations of scarce resources across multiple realities.
 
-Given the recent boom in the NFT market, there is a wild variance in utility across the NFTs that are being
+Given the recent boom in the NFT market, there is a rapid growth of variance in utility across the NFTs that are being
 released. Similarly, there is a growing number of first-time NFT buyers. This paper analyzes these variances
 and builds profiles that can be used to classify NFTs and NFT purchasers.
 
 ## The Ethereum NFTs Dataset
 
-The majority of recent NFT hype has been centered around the Ethereum blockchain. We will therefore
+The majority of recent NFT successful releases has been centered around the Ethereum blockchain[4](reference required). We will therefore
 restrict our analysis to NFT operations on the Ethereum blockchain.
 
 ### Contracts, tokens, and events
-
-A non-fungible token is a digital asset representing a distinct idea or physical object.
 
 On the Ethereum blockchain, these tokens are created using [Ethereum smart contracts](https://ethereum.org/en/developers/docs/smart-contracts/)
 which represent entire collections of non-fungible tokens. The most famous examples of such contracts
@@ -78,7 +78,7 @@ in the period of time represented by the dataset.
 ### ERC721
 
 Anyone interested in creating non-fungible tokens is free to implement their tokens in any
-manner whatsoever *as long as their implementation satisfies the non-fungibility condition*.
+manner whatsoever _as long as their implementation satisfies the non-fungibility condition_.
 The most common implementation follows [the Ethereum ERC721 protocol](https://eips.ethereum.org/EIPS/eip-721).
 
 There is real value in following a standard such as ERC721. There is a growing ecosystem of secondary protocols
@@ -89,8 +89,8 @@ majority of Ethereum NFTs.
 
 ### Technical details
 
-Smart contracts that comply with the ERC721 standard store the following events into the global Ethereum
-state every time a token is transferred from one party to another:
+Smart contracts that comply with the [ERC721](https://eips.ethereum.org/EIPS/eip-721) standard store the following events into the (global Ethereum
+state)[https://ethereum.org/en/whitepaper/] every time a token is transferred from one party to another:
 
 ```
 /// @dev This emits when ownership of any NFT changes by any mechanism.
@@ -102,28 +102,29 @@ event Transfer(address indexed _from, address indexed _to, uint256 indexed _toke
 ```
 
 These `Transfer` events can have one of the two following application binary interfaces (ABIs):
+
 ```json
 [
-    {
-        "anonymous": false,
-        "inputs": [
-            {"indexed": false, "name": "from", "type": "address"},
-            {"indexed": false, "name": "to", "type": "address"},
-            {"indexed": false, "name": "tokenId", "type": "uint256"},
-        ],
-        "name": "Transfer",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {"indexed": true, "name": "from", "type": "address"},
-            {"indexed": true, "name": "to", "type": "address"},
-            {"indexed": true, "name": "tokenId", "type": "uint256"},
-        ],
-        "name": "Transfer",
-        "type": "event"
-    }
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": false, "name": "from", "type": "address" },
+      { "indexed": false, "name": "to", "type": "address" },
+      { "indexed": false, "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "from", "type": "address" },
+      { "indexed": true, "name": "to", "type": "address" },
+      { "indexed": true, "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  }
 ]
 ```
 
@@ -141,11 +142,12 @@ on GitHub: https://github.com/bugout-dev/moonstream.
 We have partitioned the `Transfer` events we crawled into two relations -- `mints` and `transfers`.
 A mint represents the creation of an NFT and is signified by a `Transfer` event with a zero `from` address.
 A transfer represents the transfer of ownership of an NFT and is signified by a `Transfer` event with a
-*non-zero* `from` address.
+_non-zero_ `from` address.
 
 These tables share the same schema:
 
 <!-- schema_mints -->
+
 ```
 .schema mints
 sqlite> .schema mints
@@ -164,6 +166,7 @@ CREATE TABLE mints
 ```
 
 <!-- schema_transfers -->
+
 ```
 .schema transfers
 sqlite> .schema transfers
@@ -182,13 +185,14 @@ CREATE TABLE transfers
 ```
 
 The columns are as follows:
+
 - `event_id` - a unique ID associated with each event, generated when we created the dataset
 - `transaction_hash` - the hash of the [Ethereum transaction](https://ethereum.org/en/developers/docs/transactions/) in which we observed the event
 - `block_number` - the number of the [Ethereum transaction block](https://ethereum.org/en/developers/docs/blocks/) in which the transaction containing the event was mined
 - `nft_address` - the address of the smart contract containing the NFT that the event describes
 - `token_id` - the identifier that represents the NFT that the event describes within the context of the smart contract with address `nft_address`
-- `from_address` - the address that owned the NFT *before* the `Transfer` event denoted by this row in the relation (it is **not** the address that initiated the transaction in which the NFT transfer took place)
-- `to_address` - the address that owned the NFT *after* the `Transfer` event denoted by this row in the relation (it is **not** the address that was the recipient the transaction in which the NFT transfer took place)
+- `from_address` - the address that owned the NFT _before_ the `Transfer` event denoted by this row in the relation (it is **not** the address that initiated the transaction in which the NFT transfer took place)
+- `to_address` - the address that owned the NFT _after_ the `Transfer` event denoted by this row in the relation (it is **not** the address that was the recipient the transaction in which the NFT transfer took place)
 - `transaction_value` - the amount of WEI that were sent with the transaction in which the `Transfer` event took place
 - `timestamp` - the Unix timestamp at which the Ethereum transaction block with number `block_number` was mined into the Ethereum blockchain
 
@@ -199,6 +203,7 @@ April 1, 2021 and September 25, 2021**.
 #### Derived relations
 
 For ease of analysis, we have also included several derived relations in the Ethereum NFTs dataset:
+
 - `nfts` - available metadata (from [Moonstream](https://moonstream.to)) about the NFT contracts represented in the dataset
 - `current_market_values` - the current (estimated) market value of each NFT, in WEI
 - `current_owners` - the current owner of each NFT
@@ -394,11 +399,11 @@ tokens in a collection.
 It suffers from three problems:
 
 1. It is not a scalar statistic. We would need to calculate several moments of the token value distribution over
-the collection in order to capture all the information it contains, and this could make it awkward to work with.
+   the collection in order to capture all the information it contains, and this could make it awkward to work with.
 
 2. It requires us to estimate the value of the tokens in a contract. The estimation of value from on-chain data is difficult because
-people are not required to exchange monetary value on the blockchain. It would be a simple matter for
-two parties to exchange money off-chain and then exchange their NFTs on chain.
+   people are not required to exchange monetary value on the blockchain. It would be a simple matter for
+   two parties to exchange money off-chain and then exchange their NFTs on chain.
 
 This second problem is a practically insurmountable obstacle to the use of any statistic based on the
 distribution of values over the tokens in an NFT contract.
@@ -417,9 +422,9 @@ is dependent on the particular form of their extrinsic utility. One can imagine 
 tokens derive utility through being transferred or through being volatile in value, and other use cases
 in which tokens derive utility through being held or through being stable in value.
 
-Because the *form* of utility could have such a drastic effect on this candidate and the previous one,
-neither is an ideal candidate for a measure of utility. Our measure of utility should be *independent* of the
-form of the utility. We cannot predict *how* people will derive utility from their NFTs in the future, but
+Because the _form_ of utility could have such a drastic effect on this candidate and the previous one,
+neither is an ideal candidate for a measure of utility. Our measure of utility should be _independent_ of the
+form of the utility. We cannot predict _how_ people will derive utility from their NFTs in the future, but
 we would like to be aware of when they start deriving it!
 
 ### Distribution of ownership over the tokens in a collection
@@ -432,8 +437,8 @@ This means that, if an NFT collection has extrinsic utility, then it should have
 relative to its number of tokens.
 
 Suppose that a few parties strike out to purchase most of the tokens. Then the tokens would gain monetary value,
-and would become good vehicles for investment. But this represents a gain in *intrinsic* utility and a
-*reduction* in extrinsic utility. So we see that the dynamics whereby extrinsic utility is traded off for
+and would become good vehicles for investment. But this represents a gain in _intrinsic_ utility and a
+_reduction_ in extrinsic utility. So we see that the dynamics whereby extrinsic utility is traded off for
 intrinsic utility correspond to a an increased concentration of ownership among a few addresses as compared to
 a dispersion of ownership across many addresses.
 
@@ -445,7 +450,7 @@ This notion of dispersion of ownership is an invariant of the NFT contract under
 of extrinsic utility which nonetheless captures how attractive NFTs in that contract are to the
 general Ethereum community.
 
-The notion of [information theoretic entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory))
+The notion of [information theoretic entropy](<https://en.wikipedia.org/wiki/Entropy_(information_theory)>)
 formalizes this concept of dispersion. We propose a statistic called **ownership entropy**, defined below,
 as a measure of the external utility of the tokens in an NFT contract.
 
@@ -468,14 +473,14 @@ with the maximum achieved if and only if $\pi_1 = \pi_2 = \ldots = \pi_n = \frac
 
 $H(\pi)$ is an information theoretic measurement of how well distributed the probability mass of $\pi$ is over
 its sample set, and is maximized when the probability mass is evenly distributed. The units of entropy
-are *bits* (as in binary digits).
+are _bits_ (as in binary digits).
 
 This makes it a natural candidate to measure the dispersion of ownership over the tokens of an NFT
 contract.
 
 For an NFT contract $C$, let $T$ denote the set of tokens (represented by their token IDs) present in $C$.
 For each token $t \in T$, let $A_t$ denote the address owning that token. It is possible for $A_t$ to be
-*any* Ethereum address, including the $0$ address.
+_any_ Ethereum address, including the $0$ address.
 
 We can think of $C$ as a probability distribution over its tokens whereby we select each token $t$ with
 probability $\frac{1}{|T|}$. This induces a probability distribution $\pi_C$ on the set $\mathcal{A}$ of all generated
@@ -540,6 +545,7 @@ The contracts with zero entropy represent contracts that were recently minted bu
 or have stagnated in activity.
 
 More interesting are the contracts with low but non-zero entropy:
+
 <table id="low-entropy-contracts">
     <tr>
         <th>NFT contract address</th>
@@ -577,6 +583,7 @@ All these NFTs have very low rates of adoption and either the marketing efforts 
 they have not yet started gaining any momentum.
 
 Finally, let us look in the middle of the range:
+
 <table id="medium-entropy-contracts">
     <tr>
         <th>NFT contract address</th>
@@ -614,7 +621,7 @@ From this analysis of the ownership entropy spectrum, we see that the ownership 
 external utility of NFT contracts. The cases of Ethereum Name Service and the Uniswap position NFT are
 particularly interesting because holders realize the value of those NFTs in very different ways - an address
 is much more likely to hold onto an ENS token and much more likely to trade their liquidity position on
-Uniswap v3. Despite the differences between these two contracts in the *form* of their utility, they both rise to
+Uniswap v3. Despite the differences between these two contracts in the _form_ of their utility, they both rise to
 the top when we consider their ownership entropies.
 
 The large scale airdrops - the Rarible governance token and the Yield Guild Games Badges - are concerning because
@@ -640,18 +647,19 @@ the same kinds of wealth disparities as conventional markets.
 
 It also shows the viability of ownership entropy as a means of identifying NFT contracts that actually
 contain extrinsic utility. This is not of much value for NFT investors, who are typically making bets
-about the *intrinsic value* of NFTs. However, regulators are more and more concerned with establishing
+about the _intrinsic value_ of NFTs. However, regulators are more and more concerned with establishing
 the level of utility of tokens on the Ethereum blockchain and the ownership entropy is a tool perfectly
 suited to this purpose.
 
 In future versions of this report, we plan to:
+
 1. Conduct analysis of the openness of the Ethereum market over time. Rather than only considering
-data in a single window of time (in the case of this report, April 1, 2021 to September 25, 2021), we will
-consider the time series of the same statistics generated at frequent intervals from 2016 until the time
-of publication of the report.
+   data in a single window of time (in the case of this report, April 1, 2021 to September 25, 2021), we will
+   consider the time series of the same statistics generated at frequent intervals from 2016 until the time
+   of publication of the report.
 2. Expand the analysis of onwership entropy into an analysis of ownership information gain - the change
-in ownership entry over time.
-3. Enrich our dataset and our analyses with information about the addresses which *funded* NFT transfers.
+   in ownership entry over time.
+3. Enrich our dataset and our analyses with information about the addresses which _funded_ NFT transfers.
 4. Enrich our dataset and our analyses with side information about NFT valuations from centralized sources (like the OpenSea API).
 
 ## Collaboration
@@ -662,3 +670,5 @@ All the software we build is free software, and all the data we produce is avail
 
 If you have burning questions about NFTs or Ethereum smart contract activity in general, and would like
 to collaborate with us to find answers, join us on Discord: https://discord.gg/K56VNUQGvA
+
+## References
